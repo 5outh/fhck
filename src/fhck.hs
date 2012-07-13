@@ -43,13 +43,18 @@ parse str = parse' str [] []
 					op = extractM $ lookup c mappings
 					mapped c = member c $ fromList mappings
 
+doIOMapping :: Operator -> Chars -> IO Chars
+doIOMapping op cs = case op of
+					Dot -> put cs
+					Comma -> get cs
 
-operationMappings :: [(Operator, (Chars -> Chars))]
-operationMappings = zip [Plus, Minus, RShift, LShift] [add, subt, rShift, lShift]
-
-ioMapping :: [(Operator, ( Chars -> IO Chars ) )]
-ioMapping = zip [Dot, Comma] [put, get]
-
+doMapping :: Operator -> Chars -> Chars
+doMapping op cs = case op of
+					Plus 	-> add cs
+					Minus 	-> subt cs
+					RShift 	-> rShift cs
+					LShift 	-> lShift cs
+	
 add :: Chars -> Chars
 add cs = Chars replacement idx
 	where
@@ -87,21 +92,32 @@ get cs = do
 		let replacement = x ++ (ord char) : xs
 		return $ Chars replacement idx
 		
-process :: Chars -> STree -> IO ()
-process (Chars [] idx) [] 			= return ()
-process (Chars cs idx) [] 			= return ()
-process (Chars [] idx) (op:ops)  	= return ()
-process (Chars cs idx) (op:ops) 	= return ()
+process :: STree -> Chars -> IO ()
+process [] 		 cs		= return ()
+process (op:ops) cs 	= return ()
 					
 main = do
-	line <- getLine
+	let line = ",."
+	--line <- getLine
 	let instructions = extractE . parse $ line
-	process (Chars (replicate 3000 0) 1500 ) instructions
+	process instructions (Chars (replicate 3000 0) 1500 )
 	putStrLn . show $ instructions
 
 {-
 	main =
-		create list of 30000 0's
+		list <- Chars 30000 0s
+			foldl process _ STree
+				where process acc x = do
+					x ->
+						if io action
+						io <- alkdjsfka
+						call back on io
+						else
+						let nonIO = ajkhdskfjhaf
+						call back on nonIO
+						do corresponding process of x to Chars until no Operations left
+						eventually return ()
+				
 			process :: Chars -> STree , recursive
 		start on 15000th and follow instructions
 		+ = increment
