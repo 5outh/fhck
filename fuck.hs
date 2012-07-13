@@ -18,15 +18,14 @@ data Chars = Chars { curData :: [Int],
 				   }
 			 deriving (Show)
 
-			 
-mappings :: [(Char, Operator)]
-mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
-
 extractM :: Maybe Operator -> Operator
 extractM (Just x) = x
 
 extractE :: Either String STree -> STree
 extractE (Right t) = t
+
+mappings :: [(Char, Operator)]
+mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
 			 
 parse :: [Char] -> Either String STree
 parse str = parse' str [] []
@@ -44,16 +43,28 @@ parse str = parse' str [] []
 					op = extractM $ lookup c mappings
 					mapped c = member c $ fromList mappings
 
+operationMappings :: [(Operator, f)]
+operationMappings = zip [Plus, Minus, RShift, LShift, Dot, Comma] [add, subt, rShift, lShift, put, get]
 
+add = undefined
+subt = undefined
+rShift = undefined
+lShift = undefined
+put = undefined
+get = undefined  
+
+process :: Chars -> STree -> IO ()
+process (Chars dat idx) (op:ops) = return ()
+					
 main = do
 	line <- getLine
+	process (Chars { curData = (replicate 3000 0), curIndex = 1500 }) (extractE . parse $ line)
 	putStrLn . show.  extractE . parse $ line
-
 
 {-
 	main =
 		create list of 30000 0's
-			process :: list -> instructions , recursive
+			process :: Chars -> STree , recursive
 		start on 15000th and follow instructions
 		+ = increment
 		- = decrement
