@@ -2,6 +2,7 @@ fhck
 ====
 
 Brainfuck interpreter written in Haskell
+
 Author: Benjamin Kovach
 
 ----
