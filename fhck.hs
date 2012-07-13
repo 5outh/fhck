@@ -43,23 +43,63 @@ parse str = parse' str [] []
 					op = extractM $ lookup c mappings
 					mapped c = member c $ fromList mappings
 
-operationMappings :: [(Operator, f)]
-operationMappings = zip [Plus, Minus, RShift, LShift, Dot, Comma] [add, subt, rShift, lShift, put, get]
 
-add = undefined
-subt = undefined
-rShift = undefined
-lShift = undefined
-put = undefined
-get = undefined  
+operationMappings :: [(Operator, (Chars -> Chars))]
+operationMappings = zip [Plus, Minus, RShift, LShift] [add, subt, rShift, lShift]
 
+ioMapping :: [(Operator, ( Chars -> IO Chars ) )]
+ioMapping = zip [Dot, Comma] [put, get]
+
+add :: Chars -> Chars
+add cs = Chars replacement idx
+	where
+		(dats, idx) = (curData cs, curIndex cs)
+		(x,y:xs) = splitAt idx dats
+		replacement = x ++ (succ y) : xs 
+
+subt :: Chars  -> Chars
+subt cs = Chars replacement idx
+	where
+		(dats, idx) = (curData cs, curIndex cs)
+		(x,y:xs) = splitAt idx dats
+		replacement = x ++ (pred y) : xs 
+
+rShift :: Chars  -> Chars
+rShift cs = Chars dats $ succ idx
+	where (dats, idx) = (curData cs, curIndex cs)
+
+lShift :: Chars  -> Chars
+lShift cs = Chars dats $ pred idx
+	where (dats, idx) = (curData cs, curIndex cs)
+
+put :: Chars  -> IO Chars
+put cs = do
+		let (dats, idx) = (curData cs, curIndex cs)	
+		putChar $ chr (dats !! idx)
+		return cs
+		
+		
+get :: Chars -> IO Chars
+get cs = fix
+	where
+		fix = do
+			char <- getChar
+			let (dats, idx) = (curData cs, curIndex cs)
+			let (x,y:xs) = splitAt idx dats
+			let replacement = x ++ (ord char) : xs
+			return $ Chars replacement idx
+			
 process :: Chars -> STree -> IO ()
-process (Chars dat idx) (op:ops) = return ()
+process (Chars [] idx) [] 			= return ()
+process (Chars cs idx) [] 			= return ()
+process (Chars [] idx) (op:ops)  	= return ()
+process (Chars cs idx) (op:ops) 	= return ()
 					
 main = do
 	line <- getLine
-	process (Chars { curData = (replicate 3000 0), curIndex = 1500 }) (extractE . parse $ line)
-	putStrLn . show.  extractE . parse $ line
+	let instructions = extractE . parse $ line
+	process (Chars (replicate 3000 0) 1500 ) instructions
+	putStrLn . show $ instructions
 
 {-
 	main =
