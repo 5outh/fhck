@@ -80,15 +80,13 @@ put cs = do
 		
 		
 get :: Chars -> IO Chars
-get cs = fix
-	where
-		fix = do
-			char <- getChar
-			let (dats, idx) = (curData cs, curIndex cs)
-			let (x,y:xs) = splitAt idx dats
-			let replacement = x ++ (ord char) : xs
-			return $ Chars replacement idx
-			
+get cs = do
+		char <- getChar
+		let (dats, idx) = (curData cs, curIndex cs)
+		let (x,y:xs) = splitAt idx dats
+		let replacement = x ++ (ord char) : xs
+		return $ Chars replacement idx
+		
 process :: Chars -> STree -> IO ()
 process (Chars [] idx) [] 			= return ()
 process (Chars cs idx) [] 			= return ()
