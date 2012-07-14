@@ -13,11 +13,36 @@ data Operator =   Plus
 
 type STree = [Operator]				
 
-data Chars = Chars { curData :: [Int],
-					 curIndex :: Int
-				   }
-			 deriving (Show)
+type Chars = ([Int], Int, [Int])
 
+makeChars :: [Int] -> Chars 
+makeChars xs = dats'
+	where 
+		  dats = splitAt (length xs `div` 2) xs
+		  dats' = (fst dats, x, xs)
+			where (x:xs) = snd dats
+
+rShift :: Chars -> Chars
+rShift (xs, x, (y:ys)) = (xs ++ [x], y, ys)
+
+lShift :: Chars -> Chars
+lShift (xs, y, ys) = (xs', x, y:ys)
+	where (xs', x) = (init xs, last xs)
+			
+add :: Chars -> Chars
+add (a, b, c) = (a, succ b, c)
+
+subt :: Chars -> Chars
+subt (a, b, c) = (a, pred b, c)
+
+put :: Chars  -> IO ()
+put (a, b, c) = putChar $ chr b
+
+get :: Chars -> IO Chars
+get (a, b, c) = do
+		char <- getChar
+		return (a, ord char, c)
+			 
 extractM :: Maybe Operator -> Operator
 extractM (Just x) = x
 
@@ -43,10 +68,7 @@ parse str = parse' str [] []
 					op = extractM $ lookup c mappings
 					mapped c = member c $ fromList mappings
 
-doIOMapping :: Operator -> Chars -> IO Chars
-doIOMapping op cs = case op of
-					Dot -> put cs
-					Comma -> get cs
+-- handle IO actions
 
 doMapping :: Operator -> Chars -> Chars
 doMapping op cs = case op of
@@ -54,53 +76,15 @@ doMapping op cs = case op of
 					Minus 	-> subt cs
 					RShift 	-> rShift cs
 					LShift 	-> lShift cs
-	
-add :: Chars -> Chars
-add cs = Chars replacement idx
-	where
-		(dats, idx) = (curData cs, curIndex cs)
-		(x,y:xs) = splitAt idx dats
-		replacement = x ++ (succ y) : xs 
-
-subt :: Chars  -> Chars
-subt cs = Chars replacement idx
-	where
-		(dats, idx) = (curData cs, curIndex cs)
-		(x,y:xs) = splitAt idx dats
-		replacement = x ++ (pred y) : xs 
-
-rShift :: Chars  -> Chars
-rShift cs = Chars dats $ succ idx
-	where (dats, idx) = (curData cs, curIndex cs)
-
-lShift :: Chars  -> Chars
-lShift cs = Chars dats $ pred idx
-	where (dats, idx) = (curData cs, curIndex cs)
-
-put :: Chars  -> IO Chars
-put cs = do
-		let (dats, idx) = (curData cs, curIndex cs)	
-		putChar $ chr (dats !! idx)
-		return cs
 		
-		
-get :: Chars -> IO Chars
-get cs = do
-		char <- getChar
-		let (dats, idx) = (curData cs, curIndex cs)
-		let (x,y:xs) = splitAt idx dats
-		let replacement = x ++ (ord char) : xs
-		return $ Chars replacement idx
-		
-process :: STree -> Chars -> IO ()
+process :: STree -> Chars ->  IO ()
 process [] 		 cs		= return ()
 process (op:ops) cs 	= return ()
-					
+	
 main = do
 	let line = ",."
-	--line <- getLine
 	let instructions = extractE . parse $ line
-	process instructions (Chars (replicate 3000 0) 1500 )
+	let a = makeChars (replicate 3000 0)
 	putStrLn . show $ instructions
 
 {-
