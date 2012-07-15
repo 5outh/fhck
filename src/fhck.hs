@@ -15,33 +15,12 @@ type STree = [Operator]
 
 type Chars = ([Int], Int, [Int])
 
-makeChars :: [Int] -> Chars 
-makeChars xs = dats'
+makeChars :: [Int] -> IO Chars 
+makeChars xs = return dats'
 	where 
 		  dats = splitAt (length xs `div` 2) xs
 		  dats' = (fst dats, x, xs)
 			where (x:xs) = snd dats
-
-rShift :: Chars -> Chars
-rShift (xs, x, (y:ys)) = (xs ++ [x], y, ys)
-
-lShift :: Chars -> Chars
-lShift (xs, y, ys) = (xs', x, y:ys)
-	where (xs', x) = (init xs, last xs)
-			
-add :: Chars -> Chars
-add (a, b, c) = (a, succ b, c)
-
-subt :: Chars -> Chars
-subt (a, b, c) = (a, pred b, c)
-
-put :: Chars  -> IO ()
-put (a, b, c) = putChar $ chr b
-
-get :: Chars -> IO Chars
-get (a, b, c) = do
-		char <- getChar
-		return (a, ord char, c)
 			 
 extractM :: Maybe Operator -> Operator
 extractM (Just x) = x
@@ -49,9 +28,6 @@ extractM (Just x) = x
 extractE :: Either String STree -> STree
 extractE (Right t) = t
 
-mappings :: [(Char, Operator)]
-mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
-			 
 parse :: [Char] -> Either String STree
 parse str = parse' str [] []
   where parse' :: [Char] -> STree -> [STree] -> Either String STree
@@ -68,24 +44,52 @@ parse str = parse' str [] []
 					op = extractM $ lookup c mappings
 					mapped c = member c $ fromList mappings
 
--- handle IO actions
 
-doMapping :: Operator -> Chars -> Chars
-doMapping op cs = case op of
-					Plus 	-> add cs
-					Minus 	-> subt cs
-					RShift 	-> rShift cs
-					LShift 	-> lShift cs
-		
-process :: STree -> Chars ->  IO ()
-process [] 		 cs		= return ()
-process (op:ops) cs 	= return ()
+mappings :: [(Char, Operator)]
+mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
+			 
+rShift :: Chars -> IO Chars
+rShift (xs, x, (y:ys)) = return (xs ++ [x], y, ys)
+
+lShift :: Chars -> IO Chars
+lShift (xs, y, ys) = return (xs', x, y:ys)
+	where (xs', x) = (init xs, last xs)
+			
+add :: Chars -> IO Chars
+add (a, b, c) = return (a, succ b, c)
+
+subt :: Chars -> IO Chars
+subt (a, b, c) = return (a, pred b, c)
+
+put :: Chars  -> IO Chars
+put (a, b, c) = do
+	putChar $ chr b
+	return (a, b, c)
+
+get :: Chars -> IO Chars
+get (a, b, c) = do
+		char <- getChar
+		return (a, ord char, c)
+
+process :: STree -> IO Chars ->  IO Chars
+process [] 		 cs	=  cs
+process (op:ops) cs =  do
+	chars <- cs
+	let newChars = case op of
+				Plus 	-> add 		chars
+				Minus 	-> subt 	chars
+				RShift 	-> rShift 	chars
+				LShift 	-> lShift 	chars
+				Dot 	-> put 		chars
+				Comma	-> get		chars
+	process ops newChars
+	
 	
 main = do
-	let line = ",."
+	line <- getLine
 	let instructions = extractE . parse $ line
-	let a = makeChars (replicate 3000 0)
-	putStrLn . show $ instructions
+	let chars = makeChars (replicate 30 0)
+	process instructions chars
 
 {-
 	main =
