@@ -71,17 +71,21 @@ get (a, b, c) = do
 		char <- getChar
 		return (a, ord char, c)
 
+loop :: STree -> Chars -> IO Chars
+loop (op:ops) cs= undefined
+		
 process :: STree -> IO Chars ->  IO Chars
 process [] 		 cs	=  cs
 process (op:ops) cs =  do
 	chars <- cs
 	let newChars = case op of
-				Plus 	-> add 		chars
-				Minus 	-> subt 	chars
-				RShift 	-> rShift 	chars
-				LShift 	-> lShift 	chars
-				Dot 	-> put 		chars
-				Comma	-> get		chars
+				Plus 		-> add 		chars
+				Minus 		-> subt 	chars
+				RShift 		-> rShift 	chars
+				LShift 		-> lShift 	chars
+				Dot 		-> put 		chars
+				Comma	   	-> get		chars
+				Bracket xs 	-> loop xs 	chars
 	process ops newChars
 	
 	
