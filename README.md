@@ -24,7 +24,7 @@ $ ghc --make src/fhck.hs
 
 $ ./src/fhck <brainfuck_file_path>
 
-$ ./fhck sample.b`
+$ ./fhck sample.b
 
 Or, interactively:
 
