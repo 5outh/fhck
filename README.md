@@ -8,13 +8,14 @@ Author: Benjamin Kovach
 ----
 Usage:
 
+
 Windows:
 
 <pre>
 $ build/windows/fhck.exe <brainfuck_file_path>
 $ build/windows/fhck.exe sample.b
 </pre>
-Alternatively, interactively from a String argument:
+Alternatively, interactively from a string argument:
 <pre>
 $ build/windows/fhck.exe -i ",[>,]<[<]>[.>]"
 </pre>
@@ -23,9 +24,8 @@ On UNIX/Linux/Mac OSX (Interactivity is not working at the moment):
 $ build/windows/fhck sample.b
 </pre>
 Or, interactively:
-<pre>
-$ ./fhck ",[>,]<[<]>[.>]"
-</pre>
+
+PS: sample.b and the provided string argument are both programs that take a line of text and echo it back.
 
 TODO:
 
