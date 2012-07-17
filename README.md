@@ -23,7 +23,6 @@ On UNIX/Linux/Mac OSX (Interactivity is not working at the moment):
 <pre>
 $ build/windows/fhck sample.b
 </pre>
-Or, interactively:
 
 PS: sample.b and the provided string argument are both programs that take a line of text and echo it back.
 
