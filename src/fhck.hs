@@ -95,6 +95,7 @@ process (op:ops) cs =  do
 	
 	
 main = do
+	putStrLn "Enter Brainfuck program sequence:"
 	line <- getLine
 	let instructions = extractE . parse $ line
 	let chars = makeChars (replicate 30000 0)
