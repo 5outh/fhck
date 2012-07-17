@@ -69,57 +69,33 @@ put (a, b, c) = do
 get :: Chars -> IO Chars
 get (a, b, c) = do
 		char <- getChar
-		return (a, ord char, c)
+		let repl = if char == '\n' then 0 else ord char
+		return (a, repl, c)
 
 loop :: STree -> Chars -> IO Chars
-loop (op:ops) cs= undefined
+loop ops cs@(a, b, c) = case b of
+						0 -> return cs
+						_ -> do
+						newChars <- process ops $ return cs
+						loop ops newChars
 		
 process :: STree -> IO Chars ->  IO Chars
 process [] 		 cs	=  cs
 process (op:ops) cs =  do
 	chars <- cs
 	let newChars = case op of
-				Plus 		-> add 		chars
-				Minus 		-> subt 	chars
-				RShift 		-> rShift 	chars
-				LShift 		-> lShift 	chars
-				Dot 		-> put 		chars
-				Comma	   	-> get		chars
-				Bracket xs 	-> loop xs 	chars
+				Plus 		-> add 			chars
+				Minus 		-> subt 		chars
+				RShift 		-> rShift 		chars
+				LShift 		-> lShift 		chars
+				Dot 		-> put 			chars
+				Comma	   	-> get			chars
+				Bracket xs 	-> loop xs 		chars
 	process ops newChars
 	
 	
 main = do
 	line <- getLine
 	let instructions = extractE . parse $ line
-	let chars = makeChars (replicate 30 0)
+	let chars = makeChars (replicate 30000 0)
 	process instructions chars
-
-{-
-	main =
-		list <- Chars 30000 0s
-			foldl process _ STree
-				where process acc x = do
-					x ->
-						if io action
-						io <- alkdjsfka
-						call back on io
-						else
-						let nonIO = ajkhdskfjhaf
-						call back on nonIO
-						do corresponding process of x to Chars until no Operations left
-						eventually return ()
-				
-			process :: Chars -> STree , recursive
-		start on 15000th and follow instructions
-		+ = increment
-		- = decrement
-		> = move to next
-		< = move to previous
-		, = getChar
-		. = putChar
-		[] = while loop =
-			do inner stuff until current node = 0
-			when that happens, break out and continue
-		when complete, exit
--}
