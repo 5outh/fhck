@@ -6,17 +6,15 @@ Brainfuck interpreter written in Haskell
 Author: Benjamin Kovach
 
 ----
-How to use:
+Usage:
 
 Windows:
+$ build/windows/fhck.exe <brainfuck_file_path>
+$ build/windows/fhck.exe sample.b
 
-`build/windows/fhck.exe <brainfuck source filename>`
+Alternatively, interactively from a String argument:
 
-ex: `build/windows/fhck.exe sample.b`
-
-Alternatively, you can pass the program a string representing a brainfuck program using the `-i` argument:
-
-ex: `build/windows/fhck.exe -i ",[>,]<[<]>[.>]"`
+$ build/windows/fhck.exe -i ",[>,]<[<]>[.>]"
 
 On UNIX/Linux/Mac OSX (Requires GHC) (Note: I have not tested this):
 
