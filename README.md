@@ -18,16 +18,17 @@ Alternatively, interactively from a String argument:
 <pre>
 $ build/windows/fhck.exe -i ",[>,]<[<]>[.>]"
 </pre>
-On UNIX/Linux/Mac OSX (Requires GHC) (Note: I have not tested this):
+On UNIX/Linux/Mac OSX (Interactivity is not working at the moment):
 <pre>
-$ ghc --make src/fhck.hs
-$ ./src/fhck <brainfuck_file_path>
-$ ./fhck sample.b
+$ build/windows/fhck sample.b
 </pre>
 Or, interactively:
 <pre>
 $ ./fhck ",[>,]<[<]>[.>]"
 </pre>
+
 TODO:
+
+Fix interactivity in Linux
 
 Figure out how to treat standard input properly (Currently \n is treated as \NUL for the purposes of gathering user input, which I do not think is correct.)

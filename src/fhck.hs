@@ -4,13 +4,13 @@ import Data.Map(member, fromList)
 import System(getArgs)
 
 data Operator =   Plus
-				| Minus
-				| RShift 
-				| LShift
-				| Dot
-				| Comma
-				| Bracket STree
-				deriving (Show, Eq)
+		| Minus
+		| RShift 
+		| LShift
+		| Dot
+		| Comma
+		| Bracket STree
+		deriving (Show, Eq)
 
 type STree = [Operator]				
 
@@ -19,8 +19,8 @@ type Chars = ([Int], Int, [Int])
 makeChars :: [Int] -> IO Chars 
 makeChars xs = return dats'
 	where 
-		  dats = splitAt (length xs `div` 2) xs
-		  dats' = (fst dats, x, xs)
+		dats = splitAt (length xs `div` 2) xs
+		dats' = (fst dats, x, xs)
 			where (x:xs) = snd dats
 			 
 extractM :: Maybe Operator -> Operator
@@ -75,31 +75,31 @@ get (a, b, c) = do
 
 loop :: STree -> Chars -> IO Chars
 loop ops cs@(a, b, c) = case b of
-						0 -> return cs
-						_ -> do
-						newChars <- process ops $ return cs
-						loop ops newChars
+			0 -> return cs
+			_ -> do
+			newChars <- process ops $ return cs
+			loop ops newChars
 		
 process :: STree -> IO Chars ->  IO Chars
 process [] 		 cs	=  cs
 process (op:ops) cs =  do
 	chars <- cs
 	let newChars = case op of
-				Plus 		-> add 			chars
-				Minus 		-> subt 		chars
-				RShift 		-> rShift 		chars
-				LShift 		-> lShift 		chars
-				Dot 		-> put 			chars
-				Comma	   	-> get			chars
-				Bracket xs 	-> loop xs 		chars
+			Plus 		-> add 			chars
+			Minus 		-> subt 		chars
+			RShift 		-> rShift 		chars
+			LShift 		-> lShift 		chars
+			Dot 		-> put 			chars
+			Comma	   	-> get			chars
+			Bracket xs 	-> loop xs 		chars
 	process ops newChars
 	
 main = do
 	(arg0: args) <- getArgs
 	input <- case arg0 of
-			 "-i" -> return arg1
-				where (arg1:args) = args
-			 _ 	  -> readFile arg0
+			 "-i" 	-> return arg1
+					where (arg1:args) = args
+			 _    	-> readFile arg0
 	let instructions = extractE . parse $ input
 	let chars = makeChars (replicate 30000 0)
 	process instructions chars
