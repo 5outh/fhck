@@ -1,6 +1,7 @@
 import Data.Char
 import Data.Either
 import Data.Map(member, fromList)
+import System(getArgs)
 
 data Operator =   Plus
 				| Minus
@@ -95,8 +96,8 @@ process (op:ops) cs =  do
 	
 	
 main = do
-	putStrLn "Enter Brainfuck program sequence:"
-	line <- getLine
-	let instructions = extractE . parse $ line
+	(arg0: args) <- getArgs
+	input <- readFile arg0
+	let instructions = extractE . parse $ input
 	let chars = makeChars (replicate 30000 0)
 	process instructions chars
