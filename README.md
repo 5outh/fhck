@@ -9,7 +9,7 @@ Author: Benjamin Kovach
 Usage:
 
 Windows:
-$ build/windows/fhck.exe <brainfuck_file_path>\n
+$ build/windows/fhck.exe <brainfuck_file_path><br /
 $ build/windows/fhck.exe sample.b
 
 Alternatively, interactively from a String argument:
