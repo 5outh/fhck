@@ -94,10 +94,12 @@ process (op:ops) cs =  do
 				Bracket xs 	-> loop xs 		chars
 	process ops newChars
 	
-	
 main = do
 	(arg0: args) <- getArgs
-	input <- readFile arg0
+	input <- case arg0 of
+			 "-i" -> return arg1
+				where (arg1:args) = args
+			 _ 	  -> readFile arg0
 	let instructions = extractE . parse $ input
 	let chars = makeChars (replicate 30000 0)
 	process instructions chars
