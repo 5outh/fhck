@@ -16,7 +16,7 @@ On windows:
 Then, enter a `brainfuck` program, and it will run.
 
 
-On other OS's (Requires GHC) (Note: I have not tested this):
+On UNIX/Linux/Mac OSX (Requires GHC) (Note: I have not tested this):
 
 
 `ghc --make src/fhck.hs`
