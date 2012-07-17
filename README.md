@@ -11,16 +11,23 @@ How to use:
 Windows:
 
 `build/windows/fhck.exe <brainfuck source filename>`
+
 ex: `build/windows/fhck.exe sample.b`
+
 Alternatively, you can pass the program a string representing a brainfuck program using the `-i` argument:
+
 ex: `build/windows/fhck.exe -i ",[>,]<[<]>[.>]"`
 
 On UNIX/Linux/Mac OSX (Requires GHC) (Note: I have not tested this):
 
 `ghc --make src/fhck.hs`
+
 `./src/fhck <brainfuck source filename>`
+
 ex: `./fhck sample.b`
+
 Or, interactively:
+
 ex: `./fhck ",[>,]<[<]>[.>]"`
 
 TODO:
