@@ -27,6 +27,5 @@ $ build/windows/fhck sample.b
 PS: sample.b and the provided string argument are both programs that take a line of text and echo it back.
 
 *TODO:*
-* Fix interactivity in Linux
 * Handle errors
 * Figure out how to treat standard input properly (Currently \n is treated as \NUL for the purposes of gathering user input, which I do not think is correct.)
