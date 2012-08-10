@@ -90,11 +90,14 @@ process (op:ops) cs =  do
 	process ops newChars
 	
 main = do
-	(arg0: args) <- getArgs
-	input <- case arg0 of
-			 "-i" 	-> return arg1
-					where (arg1:args) = args
-			 _    	-> readFile arg0
+	args <- getArgs
+	if length args == 0 then do
+		putStrLn "Please provide a filepath or use the -i option."
+	else do
+	input <- case head args of
+			 "-i" 	-> return (head $ tail args)
+			 _    	-> readFile $ head args
 	let instructions = extractE . parse $ input
 	let chars = makeChars
 	process instructions chars
+	return ()
