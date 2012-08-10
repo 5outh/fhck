@@ -16,12 +16,8 @@ type STree = [Operator]
 
 type Chars = ([Int], Int, [Int])
 
-makeChars :: [Int] -> IO Chars 
-makeChars xs = return dats'
-	where 
-		dats = splitAt (length xs `div` 2) xs
-		dats' = (fst dats, x, xs)
-			where (x:xs) = snd dats
+makeChars :: IO Chars 
+makeChars = return (repeat 0, 0, repeat 0)
 			 
 extractM :: Maybe Operator -> Operator
 extractM (Just x) = x
@@ -50,11 +46,10 @@ mappings :: [(Char, Operator)]
 mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
 			 
 rShift :: Chars -> IO Chars
-rShift (xs, x, (y:ys)) = return (xs ++ [x], y, ys)
+rShift (xs, x, (y:ys)) = return (x:xs, y, ys)
 
 lShift :: Chars -> IO Chars
-lShift (xs, y, ys) = return (xs', x, y:ys)
-	where (xs', x) = (init xs, last xs)
+lShift (x:xs, y, ys) = return (xs, x, y:ys)
 			
 add :: Chars -> IO Chars
 add (a, b, c) = return (a, succ b, c)
@@ -101,5 +96,5 @@ main = do
 					where (arg1:args) = args
 			 _    	-> readFile arg0
 	let instructions = extractE . parse $ input
-	let chars = makeChars (replicate 30000 0)
+	let chars = makeChars
 	process instructions chars
