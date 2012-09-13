@@ -17,7 +17,7 @@ $ build/windows/fhck.exe sample.b
 </pre>
 Alternatively, interactively from a string argument:
 <pre>
-$ build/windows/fhck.exe -i ",[>,]<[<]>[.>]"
+$ build/windows/fhck.exe -i ",[>,]<[.<]"
 </pre>
 On UNIX/Linux/Mac OSX (Interactivity is not working at the moment):
 <pre>
