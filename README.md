@@ -19,7 +19,7 @@ Alternatively, interactively from a string argument:
 <pre>
 $ build/windows/fhck.exe -i ",[>,]<[.<]"
 </pre>
-On UNIX/Linux/Mac OSX (Interactivity is not working at the moment):
+On UNIX/Linux/Mac OSX:
 <pre>
 $ build/windows/fhck sample.b
 </pre>
