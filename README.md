@@ -1,4 +1,4 @@
-fhck 1.0
+fhck
 ====
 
 Brainfuck interpreter written in Haskell
