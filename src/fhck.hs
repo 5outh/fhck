@@ -96,10 +96,10 @@ main = do
   args <- getArgs
   if null args then
     putStrLn "Please provide a filepath or use the -i option."
-    else do
-    input <- case head args of
-      "-i"  -> return (head $ tail args)
-      _ -> readFile $ head args
-    let instructions = extractE . parse $ input
-    runStateT (process instructions) makeChars
-    return ()
+  else do
+  input <- case args of
+    ["-i", s]  -> return s
+    [f] -> readFile f
+  let instructions = extractE . parse $ input
+  runStateT (process instructions) makeChars
+  return ()
