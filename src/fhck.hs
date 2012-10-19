@@ -7,6 +7,7 @@ import Control.Applicative hiding ((<|>), many)
 import Control.Monad
 import Control.Monad.Trans
 import Control.Monad.Trans.State
+import Data.Maybe (fromMaybe, fromJust)
 
 data Operator =   Plus
   | Minus
@@ -24,9 +25,6 @@ type Chars = ([Int], Int, [Int])
 makeChars :: Chars 
 makeChars = (repeat 0, 0, repeat 0)
 
-extractM :: Maybe Operator -> Operator
-extractM (Just x) = x
-
 extractE :: Either String STree -> STree
 extractE (Right t) = t
 
@@ -42,7 +40,7 @@ parse str = parse' str [] []
           | c == ']' = parse' cs (Bracket (reverse ctx):s) tack
           | otherwise = parse' cs ctx stack
             where (s:tack) = stack
-                  op = extractM $ lookup c mappings
+                  op = fromJust $ lookup c mappings
                   mapped c = member c $ fromList mappings
 
 mappings :: [(Char, Operator)]
@@ -83,23 +81,21 @@ loop ops = do
 
 process :: STree -> StateT Chars IO ()
 process ops =  forM_ ops $ \op -> case op of
-        Plus   -> modify add
-        Minus  -> modify subt
-        RShift -> modify rShift
-        LShift -> modify lShift
-        Dot    -> putOp
-        Comma  -> getOp
+        Plus        -> modify add
+        Minus       -> modify subt
+        RShift      -> modify rShift
+        LShift      -> modify lShift
+        Dot         -> putOp
+        Comma       -> getOp
         Bracket xs  -> loop xs
 
 main :: IO ()
 main = do
   args <- getArgs
-  if null args then
-    putStrLn "Please provide a filepath or use the -i option."
-  else do
   input <- case args of
     ["-i", s]  -> return s
     [f] -> readFile f
+    []  -> error "Please provide a filepath or use the -i option."
   let instructions = extractE . parse $ input
   runStateT (process instructions) makeChars
   return ()
