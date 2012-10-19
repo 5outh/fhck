@@ -1,7 +1,12 @@
 import Data.Char
 import Data.Either
-import Data.Map(member, fromList)
-import System.Environment(getArgs)
+import Data.Map (member, fromList)
+import System.Environment (getArgs)
+import Text.ParserCombinators.Parsec hiding (parse)
+import Control.Applicative hiding ((<|>), many)
+import Control.Monad
+import Control.Monad.Trans
+import Control.Monad.Trans.State
 
 data Operator =   Plus
   | Minus
@@ -16,8 +21,8 @@ type STree = [Operator]
 
 type Chars = ([Int], Int, [Int])
 
-makeChars :: IO Chars 
-makeChars = return (repeat 0, 0, repeat 0)
+makeChars :: Chars 
+makeChars = (repeat 0, 0, repeat 0)
 
 extractM :: Maybe Operator -> Operator
 extractM (Just x) = x
@@ -43,49 +48,48 @@ parse str = parse' str [] []
 mappings :: [(Char, Operator)]
 mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
 
-rShift :: Chars -> IO Chars
-rShift (xs, x, (y:ys)) = return (x:xs, y, ys)
+rShift :: Chars -> Chars
+rShift (xs, x, (y:ys)) = (x:xs, y, ys)
 
-lShift :: Chars -> IO Chars
-lShift (x:xs, y, ys) = return (xs, x, y:ys)
+lShift :: Chars -> Chars
+lShift (x:xs, y, ys) = (xs, x, y:ys)
 
-add :: Chars -> IO Chars
-add (a, b, c) = return (a, succ b, c)
+add :: Chars -> Chars
+add (a, b, c) = (a, succ b, c)
 
-subt :: Chars -> IO Chars
-subt (a, b, c) = return (a, pred b, c)
+subt :: Chars -> Chars
+subt (a, b, c) =(a, pred b, c)
 
-put :: Chars  -> IO Chars
-put (a, b, c) = do
-  putChar $ chr b
-  return (a, b, c)
+putOp :: StateT Chars IO ()
+putOp = do
+  (_, b, _) <- get
+  lift $ putChar $ chr b
 
-get :: Chars -> IO Chars
-get (a, _, c) = do
-  char <- getChar
+getOp :: StateT Chars IO ()
+getOp= do
+  char <- lift getChar
+  (a, b, c) <- get
   let repl = if char == '\n' then 0 else ord char
-  return (a, repl, c)
+  put (a, repl, c)
 
-loop :: STree -> Chars -> IO Chars
-loop ops cs@(_, b, _) = case b of
-  0 -> return cs
-  _ -> do
-    newChars <- process ops $ return cs
-    loop ops newChars
+loop :: STree -> StateT Chars IO ()
+loop ops = do
+  (_, b, _) <- get
+  case b of
+    0 -> return ()
+    _ -> do
+      process ops
+      loop    ops
 
-process :: STree -> IO Chars ->  IO Chars
-process []       cs =  cs
-process (op:ops) cs =  do
-  chars <- cs
-  let newChars = case op of
-        Plus   -> add    chars
-        Minus  -> subt   chars
-        RShift -> rShift chars
-        LShift -> lShift chars
-        Dot    -> put    chars
-        Comma  -> get    chars
-        Bracket xs  -> loop xs chars
-  process ops newChars
+process :: STree -> StateT Chars IO ()
+process ops =  forM_ ops $ \op -> case op of
+        Plus   -> modify add
+        Minus  -> modify subt
+        RShift -> modify rShift
+        LShift -> modify lShift
+        Dot    -> putOp
+        Comma  -> getOp
+        Bracket xs  -> loop xs
 
 main :: IO ()
 main = do
@@ -97,6 +101,5 @@ main = do
       "-i"  -> return (head $ tail args)
       _ -> readFile $ head args
     let instructions = extractE . parse $ input
-    let chars = makeChars
-    process instructions chars
+    runStateT (process instructions) makeChars
     return ()
