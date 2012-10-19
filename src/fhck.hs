@@ -27,6 +27,7 @@ makeChars = (repeat 0, 0, repeat 0)
 
 extractE :: Either String STree -> STree
 extractE (Right t) = t
+extractE (Left  t) = error t
 
 parse :: String -> Either String STree
 parse str = parse' str [] []
@@ -61,7 +62,7 @@ subt (a, b, c) =(a, pred b, c)
 putOp :: StateT Chars IO ()
 putOp = do
   (_, b, _) <- get
-  lift $ putChar $ chr b
+  lift . putChar $ chr b
 
 getOp :: StateT Chars IO ()
 getOp= do
