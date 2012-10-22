@@ -26,7 +26,7 @@ On UNIX/Linux/Mac OSX:
 $ build/windows/fhck sample.b
 </pre>
 
-PS: sample.b and the provided string argument are both programs that take a line of text and echo it back.
+PS: sample.b is a program that takes a line of text and echoes it back.
 
 *TODO:*
 * Error handling
