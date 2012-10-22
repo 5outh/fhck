@@ -1,51 +1,15 @@
 import Data.Char
 import Data.Either
-import Data.Map (member, fromList)
 import System.Environment (getArgs)
-import Text.ParserCombinators.Parsec hiding (parse)
-import Control.Applicative hiding ((<|>), many)
 import Control.Monad
 import Control.Monad.Trans
 import Control.Monad.Trans.State
-import Data.Maybe (fromMaybe, fromJust)
+import BFParser
+import Types
 
-data Operator =   Plus
-  | Minus
-  | RShift 
-  | LShift
-  | Dot
-  | Comma
-  | Bracket STree
-    deriving (Show, Eq)
-
-type STree = [Operator]
-
-type Chars = ([Int], Int, [Int])
-
-makeChars :: Chars 
-makeChars = (repeat 0, 0, repeat 0)
-
-extractE :: Either String STree -> STree
+extractE :: Either a b -> b
 extractE (Right t) = t
-extractE (Left  t) = error t
-
-parse :: String -> Either String STree
-parse str = parse' str [] []
-  where parse' :: String -> STree -> [STree] -> Either String STree
-        parse' [] ctx [] = Right (reverse ctx)
-        parse' [] _  _ = Left "unclosed []"
-        parse' (']':_) _ [] = Left "unexpected ]"
-        parse' (c:cs) ctx stack
-          | mapped c = parse' cs (op:ctx) stack
-          | c == '[' = parse' cs [] (ctx:stack)
-          | c == ']' = parse' cs (Bracket (reverse ctx):s) tack
-          | otherwise = parse' cs ctx stack
-            where (s:tack) = stack
-                  op = fromJust $ lookup c mappings
-                  mapped c = member c $ fromList mappings
-
-mappings :: [(Char, Operator)]
-mappings = zip "+-><.," [Plus, Minus, RShift, LShift, Dot, Comma]
+extractE (Left  t) = error "There was some issue extracting."
 
 rShift :: Chars -> Chars
 rShift (xs, x, (y:ys)) = (x:xs, y, ys)
@@ -97,6 +61,6 @@ main = do
     ["-i", s]  -> return s
     [f] -> readFile f
     []  -> error "Please provide a filepath or use the -i option."
-  let instructions = extractE . parse $ input
+  let instructions = extractE . parseBF $ input
   runStateT (process instructions) makeChars
   return ()

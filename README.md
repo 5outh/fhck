@@ -30,4 +30,3 @@ PS: sample.b and the provided string argument are both programs that take a line
 
 *TODO:*
 * Error handling
-* Monadic parsing
