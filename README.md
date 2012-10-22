@@ -12,7 +12,7 @@ Usage:
 Windows:
 
 <pre>
-$ build/windows/fhck.exe <brainfuck_file_path>
+$ build/windows/fhck.exe brainfuck_file_path
 $ build/windows/fhck.exe sample.b
 </pre>
 
