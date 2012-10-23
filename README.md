@@ -27,6 +27,3 @@ $ build/windows/fhck sample.b
 </pre>
 
 PS: sample.b is a program that takes a line of text and echoes it back.
-
-*TODO:*
-* Error handling
