@@ -18,6 +18,6 @@ operator = do
 bracket :: GenParser Char st Operator
 bracket = do
   char '['
-  a <- many operator
+  a <- ops
   char ']'
   return (Bracket a)
