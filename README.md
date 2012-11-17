@@ -23,7 +23,7 @@ Alternatively, interactively from a string argument:
 On UNIX/Linux/Mac OSX:
 
 <pre>
-$ build/windows/fhck sample.b
+$ build/linux/fhck sample.b
 </pre>
 
 PS: sample.b is a program that takes a line of text and echoes it back.
