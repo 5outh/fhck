@@ -8,6 +8,7 @@ module Types (
 where
 
 import Data.Maybe(fromJust)
+import Control.Monad.Free
 
 data Operator = Plus
   | Minus
@@ -24,7 +25,7 @@ data CommandF a = Plus' a
   | LShift' a 
   | Dot' a 
   | Comma' a 
-  | Bracket' [CommandF a] 
+  | Bracket' (CommandF a)
   | End
     deriving (Show, Eq)
     
@@ -45,5 +46,4 @@ instance Functor CommandF where
   fmap f (RShift' a)   = RShift' $ f a 
   fmap f (Dot' a)      = Dot'  $ f a
   fmap f (Comma' a)    = Comma' $ f a
-  fmap f (Bracket' xs) = Bracket' $ (map (fmap f) xs)
-  fmap f End = End
+  fmap f (Bracket' c) = Bracket' $ fmap f c

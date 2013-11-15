@@ -4,6 +4,8 @@ import System.Environment (getArgs)
 import Control.Monad
 import Control.Monad.Trans
 import Control.Monad.Trans.State
+import Control.Monad.Free
+import Control.Monad.Identity
 import BFParser
 import Types
 
